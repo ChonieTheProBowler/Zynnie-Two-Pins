@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="NicTrack">
-<title>NicTrack</title>
+<meta name="apple-mobile-web-app-title" content="Zynnie Two Pins">
+<title>Zynnie Two Pins</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -397,7 +397,7 @@
 <div class="app">
 
   <div class="header">
-    <div class="logo">Nictrack</div>
+    <div class="logo">Zynnie Two Pins</div>
     <div class="date-badge" id="date-display"></div>
   </div>
 
@@ -628,7 +628,17 @@
   }
 
   render();
-  setInterval(render, 60000);
+
+  // Schedule a re-render exactly at the next midnight, then every 24h after
+  function scheduleMidnight() {
+    const now = new Date();
+    const msUntilMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0) - now;
+    setTimeout(() => {
+      render();
+      setInterval(render, 24 * 60 * 60 * 1000);
+    }, msUntilMidnight);
+  }
+  scheduleMidnight();
 </script>
 </body>
 </html>
