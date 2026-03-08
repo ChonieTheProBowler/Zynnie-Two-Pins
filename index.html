@@ -619,10 +619,12 @@
     } else {
       list.innerHTML = [...todayLogs].reverse().slice(0, 12).map((l, i) => {
         const t = new Date(l.ts);
-        const hh = String(t.getHours()).padStart(2,'0');
+        const hours = t.getHours();
         const mm = String(t.getMinutes()).padStart(2,'0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const hh = hours % 12 || 12;
         return `<div class="log-item" style="${i===0?'animation:slidein 0.25s ease':''}">
-          <div class="log-time">${hh}:${mm}</div>
+          <div class="log-time">${hh}:${mm} ${ampm}</div>
         </div>`;
       }).join('');
     }
