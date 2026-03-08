@@ -438,7 +438,7 @@
         <div class="stat-val" id="year-val">0</div>
       </div>
       <div style="text-align:right">
-        <div class="stat-period">Daily avg (30d)</div>
+        <div class="stat-period">Daily avg (7d)</div>
         <div class="stat-val" id="avg-val">0.0</div>
       </div>
     </div>
@@ -454,8 +454,8 @@
       <div class="insight-lbl">Clean days</div>
     </div>
     <div class="insight-card">
-      <div class="insight-val" id="tracked-val">0</div>
-      <div class="insight-lbl">Days tracked</div>
+      <div class="insight-val" id="dod-val">—</div>
+      <div class="insight-lbl">vs yesterday</div>
     </div>
     <div class="insight-card">
       <div class="insight-val" id="peak-val">0</div>
@@ -561,10 +561,10 @@
     const ys = new Date(now.getFullYear(), 0, 1);
     document.getElementById('year-val').textContent = logs.filter(l => new Date(l.ts) >= ys).length;
 
-    // 30-day avg
-    const s30 = new Date(now); s30.setDate(s30.getDate() - 30);
+    // 7-day avg
+    const s30 = new Date(now); s30.setDate(s30.getDate() - 7);
     const l30 = logs.filter(l => new Date(l.ts) >= s30);
-    document.getElementById('avg-val').textContent = (l30.length / 30).toFixed(1);
+    document.getElementById('avg-val').textContent = (l30.length / 7).toFixed(1);
 
     // Clean day streak — count consecutive days going back from yesterday with NO use
     // (today doesn't count yet since it might still be early)
@@ -583,11 +583,25 @@
     }
     document.getElementById('clean-val').textContent = cleanStreak;
 
-    // Days tracked (any day with at least 1 log)
-    document.getElementById('tracked-val').textContent = Object.keys(byDate).length;
-
     // Peak
     document.getElementById('peak-val').textContent = Math.max(...Object.values(byDate), 0);
+
+    // Day over day percent change
+    const yesterday = new Date(now); yesterday.setDate(yesterday.getDate() - 1);
+    const yCount = byDate[dateStr(yesterday)] || 0;
+    const tCount = todayLogs.length;
+    const dodEl = document.getElementById("dod-val");
+    if (yCount === 0 && tCount === 0) {
+      dodEl.textContent = "—";
+      dodEl.style.color = "rgba(255,255,255,0.4)";
+    } else if (yCount === 0 && tCount > 0) {
+      dodEl.textContent = "+100%";
+      dodEl.style.color = "rgba(255,255,255,0.55)";
+    } else {
+      const pct = Math.round(((tCount - yCount) / yCount) * 100);
+      dodEl.textContent = (pct > 0 ? "+" : "") + pct + "%";
+      dodEl.style.color = pct < 0 ? "#fff" : "rgba(255,255,255,0.55)";
+    }
 
     // Bar chart
     const chart = document.getElementById('bar-chart');
