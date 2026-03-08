@@ -506,8 +506,30 @@
     setTimeout(() => btn.style.transform = '', 140);
   }
 
+  let clearPending = false;
+  let clearTimer = null;
+
   function clearToday() {
-    if (!confirm("Clear all of today's logs?")) return;
+    if (!clearPending) {
+      clearPending = true;
+      const btn = document.querySelector('.clear-btn');
+      btn.textContent = 'Are you sure?';
+      btn.style.borderColor = 'rgba(255,255,255,0.4)';
+      btn.style.color = '#fff';
+      clearTimer = setTimeout(() => {
+        clearPending = false;
+        btn.textContent = 'Clear today';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      }, 3000);
+      return;
+    }
+    clearTimeout(clearTimer);
+    clearPending = false;
+    const btn = document.querySelector('.clear-btn');
+    btn.textContent = 'Clear today';
+    btn.style.borderColor = '';
+    btn.style.color = '';
     const d = getData();
     d.logs = d.logs.filter(l => l.date !== dateStr());
     save(d);
